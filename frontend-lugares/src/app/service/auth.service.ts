@@ -24,8 +24,9 @@ export class AuthService {
   // Guardar el token JWT en localStorage
   saveToken(token: string): void {
     localStorage.setItem('authToken', token);
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    localStorage.setItem('userInfo', JSON.stringify(payload)); // Guardar información del usuario
   }
-
   // Obtener el token JWT de localStorage
   getToken(): string | null {
     return localStorage.getItem('authToken');

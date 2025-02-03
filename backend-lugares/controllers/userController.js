@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 // Registrar un nuevo usuario
 exports.registrarUsuario = async (req, res) => {
-  const { username, password, role } = req.body;
+  const { username, password, role, email, phone, first_name, last_name, city } = req.body;
   try {
     // Verificar si el usuario ya existe
     const usuarioExistente = await User.verificarUsuario(username);
@@ -11,10 +11,10 @@ exports.registrarUsuario = async (req, res) => {
       return res.status(400).json({ message: 'El nombre de usuario ya está registrado' });
     }
 
-    const nuevoUsuario = await User.registrarUsuario(username, password, role);
+    const nuevoUsuario = await User.registrarUsuario(username, password, role, email, phone, first_name, last_name, city);
     res.status(201).json({ message: 'Usuario registrado exitosamente', usuario: nuevoUsuario });
   } catch (error) {
-    res.status(500).json({ message: 'Error al registrar el usuario' });
+    res.status(500).json({ message: 'Error al registrar el usuario', error: error.message });
   }
 };
 
@@ -22,26 +22,20 @@ exports.registrarUsuario = async (req, res) => {
 exports.loginUsuario = async (req, res) => {
   const { username, password } = req.body;
 
-  console.log('Datos recibidos en el backend:', { username, password });
-
   try {
-    // Valida las credenciales del usuario
     const usuario = await User.validarCredenciales(username, password);
-    console.log('Usuario encontrado:', usuario);
 
     if (!usuario) {
       return res.status(400).json({ message: 'Credenciales incorrectas' });
     }
 
-    // Genera un token JWT
+    // Generar el token JWT con todos los datos del usuario
     const token = User.crearJWT(usuario);
     res.status(200).json({ message: 'Login exitoso', token });
   } catch (error) {
-    console.error('Error en loginUsuario:', error); // Log detallado del error
     res.status(500).json({ message: 'Error al procesar el login' });
   }
 };
-
 // Middleware para verificar si el usuario es administrador
 exports.verificarAdmin = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1]; // Obtiene el token del encabezado

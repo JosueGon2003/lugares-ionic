@@ -12,6 +12,7 @@ router.get('/lugares/:id', lugarController.obtenerLugar); // Obtener un lugar po
 router.post('/lugares', userController.verificarAdmin, lugarController.agregarLugar); // Solo admin puede agregar
 router.put('/lugares/:id', userController.verificarAdmin, lugarController.modificarLugar); // Solo admin puede modificar
 router.delete('/lugares/:id', userController.verificarAdmin, lugarController.eliminarLugar); // Solo admin puede eliminar
+router.get('/comentarios', userController.verificarAutenticacion, lugarController.listarComentarios);
 
 // Ruta para agregar un comentario a un lugar
 router.post('/:lugarId/comentarios', userController.verificarAutenticacion, async (req, res) => {

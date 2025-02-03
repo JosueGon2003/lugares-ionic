@@ -28,6 +28,8 @@ export class LugaresPage implements OnInit
   isAdmin = false;
   lugares: Lugar[] = [];
   private lugarSubscription?: Subscription;
+  lugaresFiltrados: Lugar[] = [];
+  textoBusqueda: string = ''; 
 
   constructor(
     private authService: AuthService, 
@@ -47,9 +49,12 @@ export class LugaresPage implements OnInit
       const payload = JSON.parse(atob(token.split('.')[1]));
       this.isAdmin = payload.role === 'admin';
     }
-  
+
     this.lugaresService.getLugares().subscribe(
-      (lugares) => (this.lugares = lugares),
+      (lugares) => {
+        this.lugares = lugares;
+        this.lugaresFiltrados = lugares; // Inicialmente, muestra todos los lugares
+      },
       (error) => console.error('Error al cargar lugares', error)
     );
   }
@@ -83,7 +88,12 @@ export class LugaresPage implements OnInit
     this.router.navigate(['/detallelugar', id]);
   }
   
-  
+  filtrarLugares(event: any) {
+    const texto = event.target.value.toLowerCase();
+    this.lugaresFiltrados = this.lugares.filter(lugar =>
+      lugar.titulo.toLowerCase().includes(texto)
+    );
+  }
 
   toggleMenu() {
     this.menuCtrl.toggle(); // Abre o cierra el menú lateral

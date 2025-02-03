@@ -17,7 +17,10 @@ export class LugaresService {
   getLugares(): Observable<Lugar[]> {
     return this.http.get<Lugar[]>(this.lugaresUrl);
   }
-
+// En lugares.service.ts
+listarTodosLosComentarios(): Observable<Comentario[]> {
+  return this.http.get<Comentario[]>(`${this.apiUrl}/comentarios`);
+}
   // Obtener un lugar específico
   getLugar(id: number): Observable<Lugar> {
     return this.http.get<Lugar>(`${this.lugaresUrl}/${id}`);

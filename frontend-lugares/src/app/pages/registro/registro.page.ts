@@ -25,6 +25,11 @@ export class RegistroPage {
     this.registroForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', Validators.required],
+      first_name: ['', Validators.required],
+      last_name: ['', Validators.required],
+      city: ['', Validators.required],
     });
   }
 
@@ -34,12 +39,11 @@ export class RegistroPage {
         async (response) => {
           console.log('Usuario registrado:', response);
           const alert = await this.alertController.create({
-            header: 'Nuevo Registro con éxito',
-            message: 'Tu nueva cuenta ha sido creada con éxito.',
+            header: '¡Registro exitoso!',
+            message: 'Tu cuenta ha sido creada correctamente.',
             buttons: ['OK']
           });
           await alert.present();
-          
           alert.onDidDismiss().then(() => {
             this.router.navigate(['/login']);
           });

@@ -13,6 +13,18 @@ exports.listarLugares = async (req, res) => {
   }
 };
 
+// En tu controlador de comentarios
+exports.listarComentarios = async (req, res) => {
+  try {
+    const client = await pool.connect();
+    const result = await client.query('SELECT * FROM comentarios');
+    client.release();
+    res.status(200).json(result.rows);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al listar los comentarios' });
+  }
+};
+
 // Obtener un lugar específico por ID
 exports.obtenerLugar = async (req, res) => {
   const { id } = req.params;

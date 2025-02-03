@@ -6,16 +6,41 @@
 
 <ion-content class="ion-padding">
   <form [formGroup]="registroForm" (ngSubmit)="registrar()">
-    <ion-item lines="full" class="ion-margin-bottom">
+    <ion-item lines="full">
       <ion-label position="floating">Usuario</ion-label>
       <ion-input formControlName="username" required></ion-input>
     </ion-item>
-
-    <ion-item lines="full" class="ion-margin-bottom">
+  
+    <ion-item lines="full">
       <ion-label position="floating">Contraseña</ion-label>
       <ion-input type="password" formControlName="password" required></ion-input>
     </ion-item>
-
+  
+    <ion-item lines="full">
+      <ion-label position="floating">Correo Electrónico</ion-label>
+      <ion-input formControlName="email" type="email" required></ion-input>
+    </ion-item>
+  
+    <ion-item lines="full">
+      <ion-label position="floating">Teléfono</ion-label>
+      <ion-input formControlName="phone" required></ion-input>
+    </ion-item>
+  
+    <ion-item lines="full">
+      <ion-label position="floating">Nombre</ion-label>
+      <ion-input formControlName="first_name" required></ion-input>
+    </ion-item>
+  
+    <ion-item lines="full">
+      <ion-label position="floating">Apellido</ion-label>
+      <ion-input formControlName="last_name" required></ion-input>
+    </ion-item>
+  
+    <ion-item lines="full">
+      <ion-label position="floating">Ciudad</ion-label>
+      <ion-input formControlName="city" required></ion-input>
+    </ion-item>
+  
     <ion-button expand="block" type="submit" color="secondary" class="ion-margin-top">
       Registrarse
     </ion-button>

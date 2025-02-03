@@ -2,21 +2,73 @@
   <ion-toolbar>
     <ion-title>Perfil</ion-title>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/lugares" text="Regresar" color="primary">
-      </ion-back-button>
+      <ion-back-button defaultHref="/lugares" text="Regresar" color="primary"></ion-back-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
   <ion-card>
-    
     <ion-card-header>
       <ion-card-title>Información del Usuario</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p>Nombre de usuario: {{ username }}</p>
-      <p>Rol: {{ role }}</p>
+      <p><strong>Nombre de usuario:</strong> {{ username }}</p>
+      <p><strong>Correo electrónico:</strong> {{ email }}</p>
+      <p><strong>Teléfono:</strong> {{ phone }}</p>
+      <p><strong>Nombre:</strong> {{ firstName }}</p>
+      <p><strong>Apellido:</strong> {{ lastName }}</p>
+      <p><strong>Ciudad:</strong> {{ city }}</p>
+      <p><strong>Rol:</strong> {{ role }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Dashboard -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Dashboard</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Total Lugares</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <h2>{{ totalLugares }}</h2>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col size="6">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Total Comentarios</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <h2>{{ totalComentarios }}</h2>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Últimos Lugares Agregados</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-list>
+                  <ion-item *ngFor="let lugar of ultimosLugares">
+                    <ion-label>{{ lugar.titulo }}</ion-label>
+                  </ion-item>
+                </ion-list>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </ion-card-content>
   </ion-card>
 

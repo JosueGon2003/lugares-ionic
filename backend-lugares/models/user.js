@@ -3,13 +3,15 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 // Insertar un nuevo usuario (registro)
-async function registrarUsuario(username, password, role = 'user') {
+async function registrarUsuario(username, password, role = 'user', email, phone, firstName, lastName, city) {
   const client = await pool.connect();
   try {
     const hashedPassword = await bcrypt.hash(password, 10); // Encriptar la contraseña
     const result = await client.query(
-      'INSERT INTO users (username, password, role) VALUES ($1, $2, $3) RETURNING id, username, role',
-      [username, hashedPassword, role]
+      `INSERT INTO users (username, password, role, email, phone, first_name, last_name, city) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+       RETURNING id, username, role, email, phone, first_name, last_name, city`,
+      [username, hashedPassword, role, email, phone, firstName, lastName, city]
     );
     return result.rows[0];
   } finally {
@@ -57,19 +59,23 @@ async function validarCredenciales(username, password) {
 // Crear un JWT (token de autenticación) para el usuario
 function crearJWT(usuario) {
   if (!process.env.JWT_SECRET) {
-    throw new Error('JWT_SECRET no está definido'); // Manejo de errores
+    throw new Error('JWT_SECRET no está definido');
   }
 
   const payload = {
     id: usuario.id,
     username: usuario.username,
     role: usuario.role,
+    email: usuario.email,
+    phone: usuario.phone,
+    first_name: usuario.first_name,
+    last_name: usuario.last_name,
+    city: usuario.city,
   };
 
   const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
   return token;
 }
-
 
 module.exports = { registrarUsuario, verificarUsuario, validarCredenciales, crearJWT };
 
