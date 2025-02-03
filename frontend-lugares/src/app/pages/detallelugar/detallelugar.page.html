@@ -8,12 +8,11 @@
     <ion-button slot="end" (click)="mostrarFormularioComentario()">
       <ion-icon name="chatbubbles-outline"></ion-icon>
     </ion-button>
-    <ion-button slot="end" (click)="confirmarEliminacion()">
+    <ion-button slot="end" *ngIf="isAdmin" (click)="confirmarEliminacion()">
       <ion-icon name="close-circle-outline"></ion-icon>
     </ion-button>
   </ion-toolbar>
 </ion-header>
-
 <ion-content>
   <img [src]="lugar?.imagen" />
   <ion-card-title>Comentarios</ion-card-title>
@@ -23,16 +22,11 @@
       <p>{{ comentario.comentario }}</p>
     </ion-label>
 
+    <!-- Botón de puntos suspensivos que abre directamente editarComentario -->
     <ion-buttons slot="end" *ngIf="comentario.name === authenticatedUsername">
-      
-      <ion-button *ngIf="comentario.name === authenticatedUsername" (click)="editarComentario(comentario)">
-        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+      <ion-button (click)="editarComentario(comentario)">
+        <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
       </ion-button>
-      
-      <ion-button *ngIf="comentario.name === authenticatedUsername && comentario.id !== undefined" (click)="eliminarComentario(comentario.id)">
-        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-      </ion-button>
-      
     </ion-buttons>
   </ion-item>
 

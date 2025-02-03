@@ -1,13 +1,38 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar,AlertController, IonItem, IonCardTitle, IonLabel, IonFab, IonFabButton, IonIcon, IonButton, IonBackButton, IonButtons, IonCard } from '@ionic/angular/standalone';
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
+  IonToolbar,
+  AlertController,
+  IonItem,
+  IonCardTitle,
+  IonLabel,
+  IonFab,
+  IonFabButton,
+  IonIcon,
+  IonButton,
+  IonBackButton,
+  IonButtons,
+  IonCard,
+} from '@ionic/angular/standalone';
 import { Comentario, Lugar } from 'src/app/models/Lugar';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { LugaresService } from 'src/app/service/lugares.service';
 import { addIcons } from 'ionicons';
-import { chatbubblesOutline, closeCircleOutline, createOutline, pencilOutline, personCircleOutline, transgender, trashOutline } from 'ionicons/icons';
+import {
+  chatbubblesOutline,
+  closeCircleOutline,
+  createOutline,
+  pencilOutline,
+  personCircleOutline,
+  transgender,
+  trashOutline,
+  ellipsisVerticalOutline,
+} from 'ionicons/icons';
 import { AuthService } from 'src/app/service/auth.service';
 
 @Component({
@@ -15,7 +40,24 @@ import { AuthService } from 'src/app/service/auth.service';
   templateUrl: './detallelugar.page.html',
   styleUrls: ['./detallelugar.page.scss'],
   standalone: true,
-  imports: [IonButtons, IonBackButton, IonButton, IonIcon, IonFabButton, IonFab, IonLabel, IonCardTitle, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule,RouterLink]
+  imports: [
+    IonButtons,
+    IonBackButton,
+    IonButton,
+    IonIcon,
+    IonFabButton,
+    IonFab,
+    IonLabel,
+    IonCardTitle,
+    IonItem,
+    IonContent,
+    IonHeader,
+    IonTitle,
+    IonToolbar,
+    CommonModule,
+    FormsModule,
+    RouterLink,
+  ],
 })
 export class DetallelugarPage implements OnInit {
   isAdmin = false;
@@ -23,16 +65,23 @@ export class DetallelugarPage implements OnInit {
   comentario: Comentario = { id: 0, name: '', comentario: '' };
   authenticatedUsername: string = ''; // Nombre del usuario autenticado
   private lugarSubscription?: Subscription;
-  //mostrarFormularioComentario = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private lugaresService: LugaresService,
-    private alertController: AlertController,  // Inyectar el AlertController
+    private alertController: AlertController, // Inyectar el AlertController
     private authService: AuthService
   ) {
-    addIcons({pencilOutline,closeCircleOutline,chatbubblesOutline,createOutline,trashOutline,personCircleOutline});
-
+    addIcons({
+      pencilOutline,
+      closeCircleOutline,
+      chatbubblesOutline,
+      createOutline,
+      trashOutline,
+      personCircleOutline,
+      ellipsisVerticalOutline,
+    });
   }
 
   ngOnInit() {
@@ -42,41 +91,61 @@ export class DetallelugarPage implements OnInit {
       this.isAdmin = payload.role === 'admin';
       this.authenticatedUsername = payload.username; // Guardar el username del usuario autenticado
     }
-  
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.lugarSubscription = this.lugaresService.getLugar(+id).subscribe(lugar => {
-        this.lugar = lugar;
-        this.cargarComentarios(lugar.id);
-      });
+      this.lugarSubscription = this.lugaresService
+        .getLugar(+id)
+        .subscribe((lugar) => {
+          this.lugar = lugar;
+          this.cargarComentarios(lugar.id);
+        });
     }
   }
+
   ngOnDestroy() {
     this.lugarSubscription?.unsubscribe();
   }
 
   cargarComentarios(lugarId: number) {
-    this.lugaresService.listarComentariosPorLugar(lugarId).subscribe(comentarios => {
-      if (this.lugar) {
-        this.lugar.comentarios = comentarios.map(comentario => ({
-          id: comentario.id,
-          name: comentario.name, // Asegúrate de usar 'name'
-          comentario: comentario.comentario
-        }));
-      }
-    });
+    this.lugaresService
+      .listarComentariosPorLugar(lugarId)
+      .subscribe((comentarios) => {
+        if (this.lugar) {
+          this.lugar.comentarios = comentarios.map((comentario) => ({
+            id: comentario.id,
+            name: comentario.name,
+            comentario: comentario.comentario,
+          }));
+        }
+      });
   }
-  eliminarComentario(comentarioId: number) {
-    if (confirm('¿Estás seguro de que deseas eliminar este comentario?')) {
-      this.lugaresService.deleteComentario(comentarioId).subscribe(
-        () => {
-          this.lugar!.comentarios = this.lugar!.comentarios?.filter(
-            (comentario) => comentario.id !== comentarioId
-          );
+
+  async abrirMenuComentario(comentario: Comentario) {
+    const alert = await this.alertController.create({
+      header: 'Opciones',
+      buttons: [
+        {
+          text: 'Editar',
+          handler: () => {
+            this.editarComentario(comentario);
+          },
         },
-        (error) => console.error('Error al eliminar comentario', error)
-      );
-    }
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => {
+            this.eliminarComentario(comentario.id!);
+          },
+        },
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+      ],
+    });
+
+    await alert.present();
   }
   async editarComentario(comentario: Comentario) {
     const alert = await this.alertController.create({
@@ -84,15 +153,23 @@ export class DetallelugarPage implements OnInit {
       inputs: [
         {
           name: 'comentario',
-          type: 'text',
+          type: 'textarea', // Cambiamos a textarea para mejor experiencia en móviles
           value: comentario.comentario,
-          placeholder: 'Comentario'
-        }
+          placeholder: 'Escribe tu comentario aquí...',
+        },
       ],
       buttons: [
         {
           text: 'Cancelar',
-          role: 'cancel'
+          role: 'cancel',
+          cssClass: 'secondary', // Añadimos una clase CSS para estilos personalizados
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => {
+            this.confirmarEliminacionComentario(comentario.id!);
+          },
         },
         {
           text: 'Guardar',
@@ -106,12 +183,72 @@ export class DetallelugarPage implements OnInit {
                 (error) => console.error('Error al actualizar comentario', error)
               );
             }
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
   
     await alert.present();
+  }
+  async confirmarEliminacionComentario(comentarioId: number) {
+    const alert = await this.alertController.create({
+      header: 'Confirmar Eliminación',
+      message: '¿Estás seguro de que deseas eliminar este comentario?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Eliminar',
+          handler: () => {
+            this.eliminarComentario(comentarioId);
+          },
+        },
+      ],
+    });
+  
+    await alert.present();
+  }
+  eliminarComentario(comentarioId: number) {
+    this.lugaresService.deleteComentario(comentarioId).subscribe(
+      () => {
+        this.lugar!.comentarios = this.lugar!.comentarios?.filter(
+          (comentario) => comentario.id !== comentarioId
+        );
+        this.mostrarAlerta('Eliminación exitosa', 'El comentario ha sido eliminado correctamente.');
+      },
+      (error) => {
+        console.error('Error al eliminar comentario', error);
+        this.mostrarAlerta('Error', 'No se pudo eliminar el comentario. Por favor, intenta nuevamente.');
+      }
+    );
+  }
+  eliminarLugar() {
+    if (this.lugar) {
+      this.lugaresService.deleteLugar(this.lugar.id).subscribe(
+        () => {
+          this.mostrarAlerta('Eliminación exitosa', 'El lugar ha sido eliminado correctamente.').then(() => {
+            window.location.href = '/lugares';
+          });
+        },
+        (error) => {
+          console.error('Error al eliminar lugar', error);
+          this.mostrarAlerta('Error', 'No se pudo eliminar el lugar. Por favor, intenta nuevamente.');
+        }
+      );
+    }
+  }
+  
+  async mostrarAlerta(header: string, message: string): Promise<void> {
+    const alert = await this.alertController.create({
+      header: header,
+      message: message,
+      buttons: ['OK']
+    });
+    await alert.present();
+    await alert.onDidDismiss(); // Espera a que la alerta se cierre
   }
 
   async mostrarFormularioComentario() {
@@ -205,16 +342,5 @@ export class DetallelugarPage implements OnInit {
     await alert.present();
   }
 
-  eliminarLugar() {
-    if (this.lugar) {
-      this.lugaresService.deleteLugar(this.lugar.id).subscribe(
-        () => {
-          window.location.href = '/lugares';
-        },
-        (error) => {
-          console.error('Error al eliminar lugar', error);
-        }
-      );
-    }
-  }
+ 
 }
